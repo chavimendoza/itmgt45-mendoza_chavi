@@ -41,25 +41,15 @@ def relationship_status(from_member, to_member, social_graph):
     '''
     # Replace `pass` with your code. 
     # Stay within the function. Only use the parameters as input. The function should return your answer.
-    relationship_status = list()
-    
-    from_member_profile = social_graph[from_member]
-    if to_member in from_member_profile["following"]:
-        relationship_status.append("follower")
-    
-    to_member_profile = social_graph[to_member]
-    if from_member in to_member_profile["following"]:
-        relationship_status.append("following")
-        
-    if "following" in relationship_status and "follower" in relationship_status:
-        relationship_status.clear()
-        relationship_status.append("friends")
-    
-    if not relationship_status:
-        relationship_status = "no relationship"
-    
-    relationship_status = ''.join([str(x) for x in relationship_status])
-    return (str(relationship_status))
+    if to_member in social_graph[from_member]['following'] and from_member in social_graph[to_member]['following']:
+        answer='friends'
+    elif to_member in social_graph[from_member]['following']:
+        answer='follower'
+    elif from_member in social_graph[to_member]['following']:
+        answer='followed by'
+    else:
+        answer='no relationship'
+    return answer
 
 
 def tic_tac_toe(board):
@@ -88,87 +78,50 @@ def tic_tac_toe(board):
     '''
     # Replace `pass` with your code. 
     # Stay within the function. Only use the parameters as input. The function should return your answer.
-    symbols = []
-    for element in board:
-        if type(element) is list:
-            for i in element:
-                symbols.append(i)
+    newboard=list(board)
+    rowsum=[]
+    columnsum=[]
+    cross=[]
+    othercross=[]
+    convertcross=[]
+    totalsum=[]
+    
+    for y in range (len(newboard)):
+        for x in range (len(newboard[y])):
+            if newboard[y][x]=='O':
+                newboard[y][x]=7
+            elif board[y][x]=='X':
+                newboard[y][x]=1
+            elif board[y][x]=='':
+                newboard[y][x]=0
+
+    for x in range (len(newboard)):
+        rowsum.append(sum(newboard[x]))   
+                
+    for x in range (len(newboard)):
+        columnsum.append(sum([item[x] for item in newboard]))
+    
+    for x in range (len(newboard)):
+        cross.append(newboard[x][x])
         
-    symbols = list(set(symbols))
-    
-    if '' in symbols:
-        symbols.remove('')
+    for x in range (len(newboard)):
+        othercross.append([item[len(newboard)-1-x] for item in newboard])
         
-    first_player = symbols[0]
-    second_player = symbols[1]
-    blank = ''
+    for x in range (len(newboard)):
+        convertcross.append(othercross[x][x])
+                
+    totalsum=rowsum+columnsum
+    totalsum.append(sum(cross))
+    totalsum.append(sum(convertcross))
     
-    first_player_Wins = []
-    second_player_Wins = []
-    
-    for i in board:
-        if first_player in i and second_player not in i and blank not in i:
-            first_player_Wins.append(first_player, "Horizontal")
-        if second_player in i and first_player not in i and blank not in i:
-            second_player_Wins.append(second_player, "Horizontal")
-    
-    if len(first_player_Wins) == 1:
-        return first_player
-    if len(second_player_Wins) == 1:
-        return second_player
-    
-    first_player_Wins =[]
-    second_player_Wins =[]
-    
-    currentCol = 0
-    for c in board:
-        for w in board:
-            if first_player in w[currentCol]:
-                first_player_Wins.append(first_player)
-            if second_player in w[currentCol]:
-                second_player_Wins.append(second_player)
-            if len(first_player_Wins) == len(board):
-                return first_player
-            if len(second_player_Wins) == len(board):
-                return second_player
-        currentCol += 1
-        first_player_Wins =[]
-        second_player_Wins =[] 
-    
-    first_player_Wins =[]
-    second_player_Wins =[]
-
-    currentCol = 0
-
-        for s in board:
-            if first_player in s[currentCol]:
-                first_player_Wins.append(first_player)
-            if second_player in s[currentCol]: 
-                second_player_Wins.append(second_player)
-            currentCol += 1
-
-        if len(first_player_Wins) == len(board):
-            return first_player
-        if len(second_player_Wins) == len(board):
-            return second_player
-
-        first_player_Wins =[]
-        second_player_Wins =[]
-
-        currentCol = len(board)-1
-        for s in board:
-            if first_player in s[currentCol]:
-                first_player_Wins.append(first_player)
-            if second_player in s[currentCol]: 
-                second_player_Wins.append(second_player)
-            currentCol -= 1
-
-        if len(first_player_Wins) == len(board):
-            return first_player
-        if len(second_player_Wins) == len(board):
-            return second_player
-        if len(first_player_Wins) != len(board) and len(second_player_Wins) != len(board):
-            return "NO WINNER"
+    if 7*len(newboard) in totalsum:
+            answer='O'
+    elif 1*len(newboard) in totalsum:
+            answer='X'
+    else:
+            answer='NO WINNER'
+            
+    return answer
 
 def eta(first_stop, second_stop, route_map):
     '''ETA. 
@@ -201,22 +154,26 @@ def eta(first_stop, second_stop, route_map):
     '''
     # Replace `pass` with your code. 
     # Stay within the function. Only use the parameters as input. The function should return your answer.
-    currentStop = ""
-    key = 0
-    timeTotal = 0
-    temp = [" "," "]
+    newkeys=list(route_map.keys())
+    firstkeys= [item[0]for item in newkeys]
+    secondkeys=[item[1]for item in newkeys]
+    newtime=list(route_map.values())
+    answer=[]
+    final=[]
     
-    if (first_stop,second_stop) in route_map:
-        return route_map[(first_stop, second_stop)]["travel_time_mins"]
-    else:
-        while temp[1] != second_stop:
-            temp = list(route_map.keys())[key]
-            if temp[0] == first_stop and currentStop == "":
-                timeTotal += route_map[temp]["travel_time_mins"]
-            if temp[1] != second_stop and currentStop != "":
-                timeTotal += route_map[temp]["travel_time_mins"]
-            if temp[1] == second_stop:
-                timeTotal += route_map[temp]["travel_time_mins"]
-            currentStop = temp[1]
-            key += 1
-        return 
+    firstposition=firstkeys.index(first_stop)
+    secondposition=secondkeys.index(second_stop)
+        
+    for x in range(len(newtime)):
+            answer=answer+list(newtime[x].values())
+    
+    if first_stop==second_stop:
+        return sum(answer)
+    elif firstposition==secondposition:
+        return answer[firstposition]
+    elif firstposition<secondposition:
+        final=answer[firstposition:secondposition+1]
+        return sum(final)
+    elif firstposition>secondposition:
+        final=answer[firstposition:]+answer[:secondposition+1]
+        return sum(final)

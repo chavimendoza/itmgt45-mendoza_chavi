@@ -37,22 +37,14 @@ def shift_letter(letter, shift):
     '''
     # Replace `pass` with your code. 
     # Stay within the function. Only use the parameters as input. The function should return your answer.
-    if letter == " ":
-        new_letter = letter
-    
-    else:
-        alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        index = alphabet.index(letter)
-    
-    new_letter = index + shift
-    
-    if new_letter > 25:
-        alphabet_repetitions = new_letter//25
-        new_letter = new_letter - (26 * alphabet_repetitions)
-    
-    new_letter = alphabet[new_letter]
-    
-    return str(new_letter)
+    if ord(letter)==32:
+        return " "
+    elif ord(letter)+shift >90:
+        while ord(letter)+shift>90:
+            shift=shift-26
+        return chr(ord(letter)+shift)
+    elif ord(letter)+shift <=90:
+        return chr(ord(letter)+shift)
 
 def caesar_cipher(message, shift):
     '''Caesar Cipher. 
@@ -74,16 +66,17 @@ def caesar_cipher(message, shift):
     '''
     # Replace `pass` with your code. 
     # Stay within the function. Only use the parameters as input. The function should return your answer.
-    result = ""
-
-    for i in range(len(message)):
-        char = message[i]
-        if char == " ":
-            result += " "
-        else:
-            result += chr((ord(char) + shift-65) % 26 + 65)
-  
-    return(result)
+    for i in message:
+        if ord(i)==32:
+            shiftedstring=shiftedstring+' '
+        elif ord(i)+shift>90:
+            while ord(i)+value>90:
+                value=value-26
+            shiftedstring=shiftedstring+chr(ord(i)+value)
+        elif ord(i)+shift<=90:
+            shiftedstring=shiftedstring+chr(ord(i)+shift)
+        
+    return shiftedstring
 
 def shift_by_letter(letter, letter_shift):
     '''Shift By Letter. 
@@ -113,29 +106,12 @@ def shift_by_letter(letter, letter_shift):
     '''
     # Replace `pass` with your code. 
     # Stay within the function. Only use the parameters as input. The function should return your answer.
-    if letter_shift == "_":
-        letter_shift = 0
-
-    else:
-        alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        letter_shift = alphabet.index(letter_shift)
-
-    if letter == " ":
-        new_letter = letter
-    
-    else:
-        alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        index = alphabet.index(letter)
-
-    new_letter = index + letter_shift
-
-    if new_letter > 25:
-        alphabet_repetitions = new_letter//25
-        new_letter = new_letter - (26 * alphabet_repetitions)
-
-    new_letter = alphabet[new_letter]
-
-    return str(new_letter)
+    if ord(letter)==32:
+        return " "
+    elif ord(letter)-65 + ord(letter_shift)-65 >25:
+        return chr(ord(letter)-65 + ord(letter_shift)-26)
+    elif ord(letter)-65 + ord(letter_shift)-65 <=25:
+        return chr(ord(letter)-65 + ord(letter_shift))
 
 def vigenere_cipher(message, key):
     '''Vigenere Cipher. 
@@ -168,27 +144,27 @@ def vigenere_cipher(message, key):
     '''
     # Replace `pass` with your code. 
     # Stay within the function. Only use the parameters as input. The function should return your answer.
-    key = list(key)
+    keycode=[]
+    messagecode=[]
+    combinedcode=[]
+    answer=''
+    key_letters=(len(message)//len(key))*key + key[0:len(message)%len(key)]
+    
+    for y in range(0,len(message)):
+        messagecode.append(ord(message[y])-65)
+    
+    for x in range(0,len(key_letters)):
+        keycode.append(ord(key_letters[x])-65)
+        
+    for z in range (0,len(messagecode)):
+        if messagecode[z]==-33:
+            combinedcode.append(messagecode[z])
+        elif messagecode[z]+keycode[z]>25:
+            combinedcode.append(messagecode[z]+keycode[z]-26)
+        elif messagecode[z]+keycode[z]<=25:
+            combinedcode.append(messagecode[z]+keycode[z])
+        
+    for a in range(0,len(combinedcode)):
+        answer=answer+chr(combinedcode[a]+65)
 
-    if len(message) == len(key):
-        key = ("" . join(key))
-        key = key
-
-    else:
-        for i in range(len(message) -len(key)):
-            key.append(key[i % len(key)])
-        key = ("" . join(key))
-
-    cipher_text = []
-
-    for i in range(len(message)):
-        char = message[i]
-        if char == " ":
-            cipher_text += " "
-        else:
-            x = (ord(message[i]) +
-                 ord(key[i])) % 26
-            x += ord('A')
-            cipher_text.append(chr(x))
-
-    return("" . join(cipher_text))
+    return answer
